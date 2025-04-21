@@ -17,7 +17,7 @@ import 'screens/exp_screenz.dart';
 import 'screens/home/dorica_home.dart';
 
 //final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
- //   FlutterLocalNotificationsPlugin();
+//   FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure binding is initialized
@@ -25,24 +25,26 @@ Future<void> main() async {
   await AppExpiryManager.initializeNotifications();
   await DatabaseHelper().database;
   await songsSetup.initializeSongs();
-  tz.initializeTimeZones(); 
-   timeDilation = 2.0; // slows down animations speed 
+  tz.initializeTimeZones();
+  timeDilation = 2.0; // slows down animations speed
 
   //const AndroidInitializationSettings initializationSettingsAndroid =
-     // AndroidInitializationSettings('app_icon');
+  // AndroidInitializationSettings('app_icon');
 
   //final InitializationSettings initializationSettings = InitializationSettings(
-   // android: initializationSettingsAndroid,
+  // android: initializationSettingsAndroid,
   //);
 
   //await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  
-  runApp(ChangeNotifierProvider(
+
+  runApp(
+    ChangeNotifierProvider(
       create: (context) => FontSettings(),
       child: MyApp(),
     ),
-);
+  );
 }
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -55,17 +57,15 @@ class _MyAppState extends State<MyApp> {
   final AppExpiryManager appExpiryManager = AppExpiryManager();
   // setting expiration date here did not work 2024/11/24
   DateTime today = DateTime.now();
-  final DateTime expiryDate = DateTime(2024, 12, 30); //Customize the expiry date yyyy-MM-dd
+  final DateTime expiryDate =
+      DateTime(2024, 12, 30); //Customize the expiry date yyyy-MM-dd
   final DateTime oneDayToExpire = DateTime(2024, 12, 29);
   final DateTime sevenDaysToExpire = DateTime(2024, 12, 23);
   final DateTime fifteenDaysToExpire = DateTime(2024, 12, 15);
-  
+
   //bool is1DayToExpire = false;
   //bool is7DaysToExpire = false;
   //bool is15DaysToExpire = true;
-
- 
-
 
   @override
   Widget build(BuildContext context) {
@@ -140,16 +140,17 @@ class _MyAppState extends State<MyApp> {
       );
     }*/
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Mpemba SDASongs',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: SplashScreen(),
-      );
-    }
+      debugShowCheckedModeBanner: false,
+      title: 'Mpemba SDASongs',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: SplashScreen(),
+    );
+  }
 }
+
 class ThreeMonthBasedScreen extends StatefulWidget {
   @override
   _ThreeMonthBasedScreenState createState() => _ThreeMonthBasedScreenState();
@@ -157,8 +158,8 @@ class ThreeMonthBasedScreen extends StatefulWidget {
 
 class _ThreeMonthBasedScreenState extends State<ThreeMonthBasedScreen> {
   DateTime? baseDate;
-   DateTime? lockDate;
-   DateTime? lockingDate;
+  DateTime? lockDate;
+  DateTime? lockingDate;
 
   @override
   void initState() {
@@ -171,28 +172,32 @@ class _ThreeMonthBasedScreenState extends State<ThreeMonthBasedScreen> {
     final prefs = await SharedPreferences.getInstance();
     final baseDateString = prefs.getString('baseDate');
     setState(() {
-      baseDate = baseDateString != null ? DateTime.parse(baseDateString) : DateTime(2024, 09, 30); // Default base date
+      baseDate = baseDateString != null
+          ? DateTime.parse(baseDateString)
+          : DateTime(2024, 09, 30); // Default base date
     });
   }
+
   Future<void> _loadLockDate() async {
     final lockDateString = await DatabaseHelper().getLockDate();
     DateTime today = DateTime.now();
     setState(() {
       lockDate = DateTime.parse(lockDateString);
     });
-    if (today.day == lockDate?.day && today.month == lockDate?.month && today.year == lockDate?.year){
+    if (today.day == lockDate?.day &&
+        today.month == lockDate?.month &&
+        today.year == lockDate?.year) {
       setState(() {
-      _updateLockingDate();
-    });
-    }
-    else {
+        _updateLockingDate();
+      });
+    } else {
       setState(() {
-      lockingDate = lockDate;
-    });
+        lockingDate = lockDate;
+      });
     }
   }
-  Future<void> _updateLockingDate() async {
 
+  Future<void> _updateLockingDate() async {
     final prefs = await SharedPreferences.getInstance();
     final today = DateTime.now();
     DateTime newLockingDate;
@@ -200,76 +205,56 @@ class _ThreeMonthBasedScreenState extends State<ThreeMonthBasedScreen> {
     int yr;
     int mth;
     int dy;
-    String stringNewLockingDate; 
-    if (today.month  == 12){
-      yr = today.year-40;
+    String stringNewLockingDate;
+    if (today.month == 12) {
+      yr = today.year - 40;
       mth = 1;
-      if (today.day < 10){
+      if (today.day < 10) {
         dy = today.day;
-        stringNewLockingDate = '$yr'+'-'+'0$mth'+'-'+'0$dy';
-      }
-      else {
+        stringNewLockingDate = '$yr' + '-' + '0$mth' + '-' + '0$dy';
+      } else {
         dy = today.day;
-        stringNewLockingDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
+        stringNewLockingDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
       }
-      
-    }
-
-
-    else if (today.month == 01){
-      mth = today.month+1;
-      yr = today.year-40;
-      if (today.day < 29){
-
-        if (today.day < 10){
-        dy = today.day;
-        stringNewLockingDate = '$yr'+'-'+'0$mth'+'-'+'0$dy';
-      }
-      else {
-        dy = today.day;
-        stringNewLockingDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
-      }
-
-      }
-      else {
+    } else if (today.month == 01) {
+      mth = today.month + 1;
+      yr = today.year - 40;
+      if (today.day < 29) {
+        if (today.day < 10) {
+          dy = today.day;
+          stringNewLockingDate = '$yr' + '-' + '0$mth' + '-' + '0$dy';
+        } else {
+          dy = today.day;
+          stringNewLockingDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
+        }
+      } else {
         dy = 28;
-        stringNewLockingDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
+        stringNewLockingDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
       }
-      
-    }
-
-
-    else{
-      yr = today.year-40;
-      mth = today.month+1;
+    } else {
+      yr = today.year - 40;
+      mth = today.month + 1;
       dy = today.day;
-      if (mth < 10){
-      if (dy < 10){
-        
-        stringNewLockingDate = '$yr'+'-'+'0$mth'+'-'+'0$dy';
-      }
-      else{
-        if (dy == 31){
-        dy = 30;
-        stringNewLockingDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
-      }
-      else {
-        stringNewLockingDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
-      }
-      }
-      }
-      else{
-        if (dy < 10){
-        
-        stringNewLockingDate = '$yr'+'-'+'$mth'+'-'+'0$dy';
-      }
-      else { 
-        stringNewLockingDate = '$yr'+'-'+'$mth'+'-'+'$dy';
-      }
-        
+      if (mth < 10) {
+        if (dy < 10) {
+          stringNewLockingDate = '$yr' + '-' + '0$mth' + '-' + '0$dy';
+        } else {
+          if (dy == 31) {
+            dy = 30;
+            stringNewLockingDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
+          } else {
+            stringNewLockingDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
+          }
+        }
+      } else {
+        if (dy < 10) {
+          stringNewLockingDate = '$yr' + '-' + '$mth' + '-' + '0$dy';
+        } else {
+          stringNewLockingDate = '$yr' + '-' + '$mth' + '-' + '$dy';
+        }
       }
     }
-    
+
     newLockingDate = DateTime.parse(stringNewLockingDate);
 
     //await prefs.setString('baseDate', newBaseDate.toIso8601String());
@@ -287,17 +272,18 @@ class _ThreeMonthBasedScreenState extends State<ThreeMonthBasedScreen> {
       );
     }
 
-   DateTime today = DateTime.now();
+    DateTime today = DateTime.now();
 
     /*bool isAfterLockDate() {
     return today.isAfter(lockDate!);
   }*/
-  bool isAfterLockDate = today.isAfter(lockingDate!);
+    bool isAfterLockDate = today.isAfter(lockingDate!);
 
-    bool is5minutes = today.difference(baseDate!).inMinutes>=5;
+    bool is5minutes = today.difference(baseDate!).inMinutes >= 5;
 
     // Calculate the difference in days from the base date
-    int daysDifference = (today.year - baseDate!.year) * 12 + (today.day - baseDate!.day);
+    int daysDifference =
+        (today.year - baseDate!.year) * 12 + (today.day - baseDate!.day);
 
     int daysDiff = today.day - baseDate!.day;
 
@@ -305,16 +291,21 @@ class _ThreeMonthBasedScreenState extends State<ThreeMonthBasedScreen> {
     bool isAfterTwoDayInterval = daysDiff % 2 == 0;
 
     // Calculate the difference in months from the base date
-    int monthsDifference = (today.year - baseDate!.year) * 12 + (today.month - baseDate!.month);
+    int monthsDifference =
+        (today.year - baseDate!.year) * 12 + (today.month - baseDate!.month);
 
     // Check if today is after the three-month interval
-    bool isAfterThreeMonthInterval = monthsDifference % 3 == 0 && today.day >= baseDate!.day;
+    bool isAfterThreeMonthInterval =
+        monthsDifference % 3 == 0 && today.day >= baseDate!.day;
 
     // Check if today is after the three-month interval
-    bool isAfterOneMonthInterval = monthsDifference % 1 == 0 && today.day >= baseDate!.day;
+    bool isAfterOneMonthInterval =
+        monthsDifference % 1 == 0 && today.day >= baseDate!.day;
 
     // Navigate to the appropriate screen
-    return isAfterLockDate? PasswordProtectedScreen(onPasswordSuccess: _updateLockDate) : ChurchHome();
+    return isAfterLockDate
+        ? PasswordProtectedScreen(onPasswordSuccess: _updateLockDate)
+        : ChurchHome();
   }
 
   Future<void> _updateBaseDate() async {
@@ -326,8 +317,8 @@ class _ThreeMonthBasedScreenState extends State<ThreeMonthBasedScreen> {
       baseDate = newBaseDate;
     });
   }
-  Future<void> _updateLockDate() async {
 
+  Future<void> _updateLockDate() async {
     final prefs = await SharedPreferences.getInstance();
     final today = DateTime.now();
     DateTime newLockDate;
@@ -335,76 +326,56 @@ class _ThreeMonthBasedScreenState extends State<ThreeMonthBasedScreen> {
     int yr;
     int mth;
     int dy;
-    String stringNewLockDate; 
-    if (today.month  == 12){
-      yr = today.year+1;
+    String stringNewLockDate;
+    if (today.month == 12) {
+      yr = today.year + 1;
       mth = 1;
-      if (today.day < 10){
+      if (today.day < 10) {
         dy = today.day;
-        stringNewLockDate = '$yr'+'-'+'0$mth'+'-'+'0$dy';
-      }
-      else {
+        stringNewLockDate = '$yr' + '-' + '0$mth' + '-' + '0$dy';
+      } else {
         dy = today.day;
-        stringNewLockDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
+        stringNewLockDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
       }
-      
-    }
-
-
-    else if (today.month == 01){
-      mth = today.month+1;
+    } else if (today.month == 01) {
+      mth = today.month + 1;
       yr = today.year;
-      if (today.day < 29){
-
-        if (today.day < 10){
-        dy = today.day;
-        stringNewLockDate = '$yr'+'-'+'0$mth'+'-'+'0$dy';
-      }
-      else {
-        dy = today.day;
-        stringNewLockDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
-      }
-
-      }
-      else {
+      if (today.day < 29) {
+        if (today.day < 10) {
+          dy = today.day;
+          stringNewLockDate = '$yr' + '-' + '0$mth' + '-' + '0$dy';
+        } else {
+          dy = today.day;
+          stringNewLockDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
+        }
+      } else {
         dy = 28;
-        stringNewLockDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
+        stringNewLockDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
       }
-      
-    }
-
-
-    else{
+    } else {
       yr = today.year;
-      mth = today.month+1;
+      mth = today.month + 1;
       dy = today.day;
-      if (mth < 10){
-      if (dy < 10){
-        
-        stringNewLockDate = '$yr'+'-'+'0$mth'+'-'+'0$dy';
-      }
-      else{
-        if (dy == 31){
-        dy = 30;
-        stringNewLockDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
-      }
-      else {
-        stringNewLockDate = '$yr'+'-'+'0$mth'+'-'+'$dy';
-      }
-      }
-      }
-      else{
-        if (dy < 10){
-        
-        stringNewLockDate = '$yr'+'-'+'$mth'+'-'+'0$dy';
-      }
-      else { 
-        stringNewLockDate = '$yr'+'-'+'$mth'+'-'+'$dy';
-      }
-        
+      if (mth < 10) {
+        if (dy < 10) {
+          stringNewLockDate = '$yr' + '-' + '0$mth' + '-' + '0$dy';
+        } else {
+          if (dy == 31) {
+            dy = 30;
+            stringNewLockDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
+          } else {
+            stringNewLockDate = '$yr' + '-' + '0$mth' + '-' + '$dy';
+          }
+        }
+      } else {
+        if (dy < 10) {
+          stringNewLockDate = '$yr' + '-' + '$mth' + '-' + '0$dy';
+        } else {
+          stringNewLockDate = '$yr' + '-' + '$mth' + '-' + '$dy';
+        }
       }
     }
-    
+
     newLockDate = DateTime.parse(stringNewLockDate);
 
     //await prefs.setString('baseDate', newBaseDate.toIso8601String());
@@ -424,35 +395,27 @@ class PasswordProtectedScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-        //backgroundColor: const Color.fromARGB(255, 33, 138, 40),
-        title: Text("Password Required",
-      style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,           
+          centerTitle: true,
+          //backgroundColor: const Color.fromARGB(255, 33, 138, 40),
+          title: Text("Password Required",
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              )),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+              colors: [Colors.blue, const Color.fromARGB(255, 128, 0, 0)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             )),
-            flexibleSpace: 
-              Container(
-                decoration: 
-                BoxDecoration(
-                  gradient: 
-                  LinearGradient(
-                    colors:
-                    [Colors.blue, const Color.fromARGB(255, 128, 0, 0)],
-                    begin: 
-                    Alignment.topCenter, 
-                    end: 
-                    Alignment.bottomCenter,
-                    )
-                ),
-              ),
-            
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => SystemNavigator.pop(),
-              color: Colors.white,
-            )),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => SystemNavigator.pop(),
+            color: Colors.white,
+          )),
       body: PasswordForm(onPasswordSuccess: onPasswordSuccess),
     );
   }
@@ -473,8 +436,9 @@ class _PasswordFormState extends State<PasswordForm> {
   String correctPassword = ""; // Set your password here
   String errorMessage = "";
   bool _obscurePassword = true;
-  String askForPasswordString = "To get your password;\ncontact the developer:\n\n"
-  "smarttechplusplus@gmail.com\n0888693338\n0999555439";
+  String askForPasswordString =
+      "To get your password;\ncontact the developer:\n\n"
+      "smarttechplusplus@gmail.com\n0888693338\n0999555439";
   DateTime? lockDate;
 
   @override
@@ -482,12 +446,14 @@ class _PasswordFormState extends State<PasswordForm> {
     super.initState();
     _loadLockDate();
   }
-   @override
+
+  @override
   void dispose() {
     // Dispose the controllers when the widget is disposed
     _passwordController.dispose();
     super.dispose();
   }
+
   // clear the text fields
   void _clear() {
     _passwordController.clear();
@@ -499,7 +465,7 @@ class _PasswordFormState extends State<PasswordForm> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Contact the Developer"),
-          content:  SelectableText(askForPasswordString),
+          content: SelectableText(askForPasswordString),
           actions: <Widget>[
             ElevatedButton(
               child: const Text("Close"),
@@ -510,13 +476,15 @@ class _PasswordFormState extends State<PasswordForm> {
       },
     );
   }
+
   void _showPasswordHint(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Password Hint"),
-          content:  SelectableText('Tichenjere tingaiwale Yehova nthawi yothaitha!!'),
+          content:
+              SelectableText('Tichenjere tingaiwale Yehova nthawi yothaitha!!'),
           actions: <Widget>[
             ElevatedButton(
               child: const Text("Close"),
@@ -529,14 +497,15 @@ class _PasswordFormState extends State<PasswordForm> {
   }
 
   void _validatePassword() {
-     correctPassword = "Mpemba$passYear"; // Set your password here
+    correctPassword = "Mpemba$passYear"; // Set your password here
     if (_passwordController.text == correctPassword) {
       // If the password is correct, update the base date and navigate to HomeScreen
       widget.onPasswordSuccess();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => ChurchHome()),
-      );_clear();
+      );
+      _clear();
     } else {
       // Show an error message
       setState(() {
@@ -544,6 +513,7 @@ class _PasswordFormState extends State<PasswordForm> {
       });
     }
   }
+
   Future<void> _loadLockDate() async {
     final lockDateString = await DatabaseHelper().getLockDate();
     setState(() {
@@ -569,45 +539,44 @@ class _PasswordFormState extends State<PasswordForm> {
             controller: _passwordController,
             decoration: InputDecoration(
               labelText: "Password",
-              prefixIcon: const Icon(Icons.lock,
-                  color: Colors.green),
-                  suffixIcon: IconButton(
-                    icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  labelStyle: TextStyle(fontSize: 18.0),
-                border: OutlineInputBorder(),
-                ),
-                obscureText: _obscurePassword,
+              prefixIcon: const Icon(Icons.lock, color: Colors.green),
+              suffixIcon: IconButton(
+                icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
+                },
               ),
+              labelStyle: TextStyle(fontSize: 18.0),
+              border: OutlineInputBorder(),
+            ),
+            obscureText: _obscurePassword,
+          ),
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: _validatePassword,
             child: Text("Open"),
             style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,// text and iconcolor
-                  backgroundColor: Colors.green // Background color
+                foregroundColor: Colors.white, // text and iconcolor
+                backgroundColor: Colors.green // Background color
                 ),
           ),
           SizedBox(height: 20),
           ElevatedButton.icon(
             onPressed: () {
-              if (lockDate == DateTime.parse('2025-01-20')){
-              _askForPassword(context);
-              }
-              else {
+              if (lockDate == DateTime.parse('2025-01-20')) {
+                _askForPassword(context);
+              } else {
                 _showPasswordHint(context);
               }
-              }, 
+            },
             label: Text("Forgot Password?"),
             icon: const Icon(Icons.lock_reset),
             style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white,// text and iconcolor
-                  backgroundColor: Colors.green // Background color
+                foregroundColor: Colors.white, // text and iconcolor
+                backgroundColor: Colors.green // Background color
                 ),
           ),
           if (errorMessage.isNotEmpty)
@@ -624,7 +593,3 @@ class _PasswordFormState extends State<PasswordForm> {
     );
   }
 }
-
-
-
-

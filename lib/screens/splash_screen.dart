@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
+import '../app_expiry_manager.dart';
+import '../database_helper/database_helper.dart';
 import '../main.dart';
+import '../options/songs_setup.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -12,6 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     // Navigate to home screen after a delay
     Timer(Duration(seconds: 6), () {
       Navigator.of(context).pushReplacement(
